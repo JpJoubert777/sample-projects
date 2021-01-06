@@ -1,0 +1,23 @@
+{
+  "name": "jp_sample_project_2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JpJoubert777/jp-sample-project-2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JpJoubert777/jp-sample-project-2/issues"
+  },
+  "homepage": "https://github.com/JpJoubert777/jp-sample-project-2#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "slackbots": "^1.2.0"
+  }
+}
