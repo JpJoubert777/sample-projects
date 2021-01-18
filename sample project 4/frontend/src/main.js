@@ -4,8 +4,12 @@ import router from './router'
 import store from './store'
 import axios from "axios"
 import firebase from "firebase/app"
+import $ from 'jquery'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import * as pbi from 'powerbi-client';
 
-
+window.$ = $;
 Vue.use(firebase) 
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false

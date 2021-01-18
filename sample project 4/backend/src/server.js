@@ -25,9 +25,9 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/../views/index.html'));
-});
+// app.get('/', function (req, res) {
+//     res.sendFile(path.join(__dirname + '/../views/index.html'));
+// });
 
 app.get('/getEmbedToken', async function (req, res) {
 

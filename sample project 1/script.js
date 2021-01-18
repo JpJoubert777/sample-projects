@@ -27,7 +27,7 @@ mysqlConnection.connect((err)=> {
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}..`));
 
-//Creating GET Router to fetch all the customer details from the MySQL Database
+//GET request to fetch all the customer details from the MySQL Database
 app.get('/customer' , (req, res) => {
     mysqlConnection.query('SELECT * FROM customers', (err, rows, fields) => {
     if (!err)
@@ -37,7 +37,7 @@ app.get('/customer' , (req, res) => {
     })
     } );
 
- //Router to INSERT/POST a customer's detail
+ //INSERT a customer's detail
 app.post('/customer', (req, res) => {
     let cust = req.body;
     var sql = "SET @customer_id = ?;SET @first_name = ?;SET @last_name = ?;SET @email = ?; \
@@ -54,7 +54,7 @@ app.post('/customer', (req, res) => {
     });   
 
 
-//Router to UPDATE a customer's detail
+//UPDATE a customer's detail
 app.put('/customer', (req, res) => {
     let cust = req.body;
     var sql = "SET @customer_id = ?;SET @first_name = ?;SET @last_name = ?;SET @email = ?; \
@@ -68,7 +68,7 @@ app.put('/customer', (req, res) => {
     });
 
 
-//Router to DELETE a customer's detail
+//DELETE a customer's detail
 app.delete('/customer/:id', (req, res) => {
     mysqlConnection.query('DELETE FROM customers WHERE customer_id = ?', [req.params.id], (err, rows, fields) => {
     if (!err)
