@@ -9,6 +9,7 @@ const utils = require(__dirname + "/utils.js");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const cors = require("cors");
 
 // Prepare server for Bootstrap, jQuery and PowerBI files
 app.use('/js', express.static('./node_modules/bootstrap/dist/js/')); // Redirect bootstrap JS
@@ -16,7 +17,7 @@ app.use('/js', express.static('./node_modules/jquery/dist/')); // Redirect JS jQ
 app.use('/js', express.static('./node_modules/powerbi-client/dist/')) // Redirect JS PowerBI
 app.use('/css', express.static('./node_modules/bootstrap/dist/css/')); // Redirect CSS bootstrap
 app.use('/public', express.static('./public/')); // Use custom JS and CSS files
-
+app.use(cors({ origin: true }));
 const port = process.env.PORT || 5300;
 
 app.use(bodyParser.json());
@@ -25,9 +26,9 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// app.get('/', function (req, res) {
-//     res.sendFile(path.join(__dirname + '/../views/index.html'));
-// });
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname + '/../views/index.html'));
+});
 
 app.get('/getEmbedToken', async function (req, res) {
 
@@ -46,4 +47,9 @@ app.get('/getEmbedToken', async function (req, res) {
     res.status(result.status).send(result);
 });
 
+app.get('/helloWorld', async function (req, res) {
+    res.send("helloWorld");
+});
+
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
