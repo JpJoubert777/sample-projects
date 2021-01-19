@@ -17,7 +17,7 @@ bot.on('start', () => {
 
     bot.postMessageToChannel(
         'random',
-        'Beep bop I am a bot',
+        'Hello',
         params
     );
 })
