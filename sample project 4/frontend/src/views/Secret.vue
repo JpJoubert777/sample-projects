@@ -18,6 +18,8 @@
 <script>
 import * as pbi from 'powerbi-client';
 import axios from "axios";
+
+const jwt = require('jsonwebtoken');
 export default {
     name:'secret', 
     methods: {
@@ -34,12 +36,22 @@ export default {
         // Initialize iframe for embedding report
         powerbi.bootstrap(reportContainer, { type: "report" });
 
+        let path = require('path');
+        //PUBLIC key
+        var publicKEY  = "-----BEGIN PUBLIC KEY-----MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAX712K1LnGs59HzeaiQesVwccb6bA4P0TUE0q5uHKUH9AZb7vwhJE+7BmlViFGQie6aPjWimmXpnnzJ0u8Sua7wIDAQAB-----END PUBLIC KEY-----"
 
+        // VERIFYING OPTIONS
+        var verifyOptions = {
+            algorithm:  ["RS256"]
+        };
+        
         axios.get(`https://cryptic-thicket-39928.herokuapp.com/getEmbedToken`)
         .then(response => {
-            // JSON responses are automatically parsed.
-            console.log(response.data)
-            embedFunction(response.data)
+            //get the JWT token and decrypt it to get the PowerBI token
+            var legit = jwt.verify(response.data, publicKEY, verifyOptions);
+
+            //embed the report
+            embedFunction(legit)
              
         })
         .catch(e => {
@@ -68,7 +80,7 @@ export default {
 
                 // Embed Power BI report when Access token and Embed URL are available
                 let report = powerbi.embed(reportContainer, reportLoadConfig);
-                console.log("after let report ")
+         
                 // Clear any other loaded handler events
                 report.off("loaded");
 
