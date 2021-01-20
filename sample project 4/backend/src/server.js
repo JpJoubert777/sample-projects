@@ -10,6 +10,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const cors = require("cors");
+const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 // Prepare server for Bootstrap, jQuery and PowerBI files
 app.use('/js', express.static('./node_modules/bootstrap/dist/js/')); // Redirect bootstrap JS
@@ -19,6 +21,14 @@ app.use('/css', express.static('./node_modules/bootstrap/dist/css/')); // Redire
 app.use('/public', express.static('./public/')); // Use custom JS and CSS files
 app.use(cors({ origin: true }));
 const port = process.env.PORT || 5300;
+
+
+   // PRIVATE key
+   var privateKEY  = fs.readFileSync(path.join(__dirname +'/private.key'), 'utf8');
+   // SIGNING OPTIONS
+   var signOptions = {
+    algorithm:  "RS256"
+   };
 
 app.use(bodyParser.json());
 
@@ -43,12 +53,20 @@ app.get('/getEmbedToken', async function (req, res) {
     // Get the details like Embed URL, Access token and Expiry
     let result = await embedToken.getEmbedInfo();
 
+
+    //encrypt with JWT token
+    var token = jwt.sign(result, privateKEY, signOptions);
+
     // result.status specified the statusCode that will be sent along with the result object
-    res.status(result.status).send(result);
+    //res.status(result.status).send(result);
+
+    res.send(token);
 });
 
 app.get('/helloWorld', async function (req, res) {
-    res.send("helloWorld");
+    var token = jwt.sign(payload, privateKEY, signOptions);
+    var legit = jwt.verify(token, publicKEY, verifyOptions);
+    res.send(legit);
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
