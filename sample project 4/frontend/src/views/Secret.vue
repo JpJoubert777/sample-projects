@@ -18,7 +18,7 @@
 <script>
 import * as pbi from 'powerbi-client';
 import axios from "axios";
-
+import firebase from 'firebase'
 const jwt = require('jsonwebtoken');
 export default {
     name:'secret', 
@@ -37,18 +37,30 @@ export default {
         powerbi.bootstrap(reportContainer, { type: "report" });
 
         let path = require('path');
-        //PUBLIC key
-        var publicKEY  = "-----BEGIN PUBLIC KEY-----MFswDQYJKoZIhvcNAQEBBQADSgAwRwJAX712K1LnGs59HzeaiQesVwccb6bA4P0TUE0q5uHKUH9AZb7vwhJE+7BmlViFGQie6aPjWimmXpnnzJ0u8Sua7wIDAQAB-----END PUBLIC KEY-----"
-
+ 
+        //init connection to database containing jwt key
+        const db = firebase.firestore();
+        
+        //get key from firestore
+        var KEY = "";
+        getKEY();
+        
         // VERIFYING OPTIONS
         var verifyOptions = {
-            algorithm:  ["RS256"]
+            algorithm:  ["HS256"]
         };
         
-        axios.get(`https://cryptic-thicket-39928.herokuapp.com/getEmbedToken`)
+        axios.get(`http://localhost:5300/getEmbedToken`)
         .then(response => {
             //get the JWT token and decrypt it to get the PowerBI token
-            var legit = jwt.verify(response.data, publicKEY, verifyOptions);
+            
+            try{
+                
+                var legit = jwt.verify(response.data, KEY, verifyOptions);
+            }
+            catch (e){
+                console.log(e);
+            }
 
             //embed the report
             embedFunction(legit)
@@ -57,6 +69,19 @@ export default {
         .catch(e => {
             console.log(e.message)
         })
+
+        function getKEY(){
+            db.collection('settings').doc('backend')
+            .get()
+            .then(doc => {
+                var thisKEY = doc.data().key;
+                KEY = thisKEY;
+            })
+            .catch(err => {
+                console.log('Error getting document', err);
+            });
+        }
+        
         function embedFunction(embedData) {
                 
                 // Create a config object with type of the object, Embed details and Token Type
@@ -104,6 +129,7 @@ export default {
                 report.on("error", function (event) {
                     let errorMsg = event.detail;
                     console.error(errorMsg);
+                    console.log(errorMsg);
                     return;
                 });
             
@@ -121,11 +147,7 @@ export default {
             // Split the message with \r\n delimiter to get the errors from the error message
             let errorLines = errMsg.split("\r\n");
 
-            // Create error header
-            let errHeader = document.createElement("p");
-            let strong = document.createElement("strong");
-            let node = document.createTextNode("Error Details:");
-
+            
             // Get the error container
             let errContainer = errorContainer.get(0);
 

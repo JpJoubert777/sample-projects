@@ -16,12 +16,14 @@
         "bootstrap": "^4.4.1",
         "cors": "^2.8.5",
         "express": "^4.17.1",
+        "firebase-admin": "^9.4.2",
         "guid": "0.0.12",
         "jquery": "^3.5.1",
         "jsonwebtoken": "^8.5.1",
         "node-fetch": "^2.6.1",
         "path": "^0.12.7",
-        "powerbi-client": "^2.14.1"
+        "powerbi-client": "^2.14.1",
+        "utf8": "^3.0.0"
     },
     "devDependencies": {}
 }
