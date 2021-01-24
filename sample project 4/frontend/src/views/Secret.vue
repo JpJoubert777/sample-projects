@@ -1,7 +1,9 @@
 
 <template>
-    <div class = "modal-overlay" v-if="!passed" >
-        <p>{{errorMessage}}</p>
+    <div class = "backdrop" v-if="!passed" >
+        <div class = "modal-overlay">
+            <p>{{errorMessage}}</p>
+        </div>
     </div>
     <div v-else>
         <section id="report-container" class="embed-container" >
@@ -37,7 +39,7 @@ export default {
             let path = require('path');
     
             //init connection to database containing jwt key
-            const db = firebase.firestore(); //>>>>>>>>>>>call from a different file that exports this (import db from blah.js)
+            const db = firebase.firestore(); 
             
             //get key from firestore
             var KEY = "";
@@ -55,7 +57,7 @@ export default {
                 
                 try{
                     //get the JWT token and decrypt it to get the PowerBI toke
-                    var legit = jwt.verify(response.data, "-----BEGIN EC PRIVATE KEY----- MHcCAQEEIHJQrhJW/b7X/gRL2vQC/3VbG3iDr4yfUJy32SVfh50WoAoGCCqGSM49 AwEHoUQDQgAEexjFw4rZCMVzq8UP7hMKipp+uz6NkZa2tE1md23JlatQQY3v0ETW VWXr3JTI/qv4bzabyjfXl8+70vIeEO/QXg== -----END EC PRIVATE KEY-----", verifyOptions);
+                    var legit = jwt.verify(response.data,KEY, verifyOptions);
                     //embed the report
                 
                     embedFunction(legit)
@@ -64,14 +66,14 @@ export default {
                 catch (e){
                     this.passed = false;
                     this.errorMessage = e.message;
-                    console.log(e); //add modal
+                    console.log(e);
                 }
     
             })
             .catch(e => {
                 this.passed = false;
                 this.errorMessage = e.message;
-                console.log("catch") //add modal
+                console.log("catch") 
                 console.log(e.message)
             })
 
