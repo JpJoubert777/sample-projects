@@ -38,6 +38,7 @@ app.get('/getEmbedToken', async function (req, res) {
     configCheckResult = utils.validateConfig();
     if (configCheckResult) {
         console.log(configCheckResult)
+        
         return {
             "status": 400,
             "error": configCheckResult
@@ -70,7 +71,8 @@ app.get('/getEmbedToken', async function (req, res) {
     
     // SIGNING OPTIONS
     var signOptions = {
-        algorithm:  "HS256"
+        algorithm:  "HS256",
+        expiresIn:  "1h",
     };
 
     //only kept in case you want to see the problems that occur with the other encryption algorithms
@@ -81,7 +83,7 @@ app.get('/getEmbedToken', async function (req, res) {
         var token = jwt.sign(result, KEY, signOptions);
     }
     catch (e){
-        console.log(e);
+        console.log(e.message);
     }
     
     res.send(token);
