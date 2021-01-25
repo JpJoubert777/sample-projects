@@ -1,8 +1,8 @@
 
 <template>
-    <div class = "backdrop" v-if="!passed" >
+    <div class = "backdrop" v-if="!this.$store.getters.getPassed" >
         <div class = "modal-overlay">
-            <p>{{errorMessage}}</p>
+            <p>{{this.$store.getters.getCurrentError}}</p>
         </div>
     </div>
     <div v-else>
@@ -21,128 +21,37 @@ export default {
     name:'secret', 
     data() {
         return { 
-            passed : true,
-            errorMessage : "error"
         }
     },
     methods: {
     },
     mounted(){
-        if (this.passed) {
-                    let models = pbi.models;
-        
-            let reportContainer = $("#report-container").get(0);
+        if (this.$store.getters.getPassed) {
+            //get JWT key from firestore
+            this.$store.commit('setJwtKey');
 
-            // Initialize iframe for embedding report
-            powerbi.bootstrap(reportContainer, { type: "report" });
-
-            let path = require('path');
-    
-            //init connection to database containing jwt key
-            const db = firebase.firestore(); 
-            
-            //get key from firestore
-            var KEY = "";
-            getKEY();
-            
-            // VERIFYING OPTIONS
-            var verifyOptions = {
-                expiresIn:  "1h",
-                algorithm:  ["HS256"]
-            };
-            
             axios.get(`http://localhost:5300/getEmbedToken`)
             .then(response => {
-                
-                
                 try{
-                    //get the JWT token and decrypt it to get the PowerBI toke
-                    var legit = jwt.verify(response.data,KEY, verifyOptions);
+                    //get the JWT token and decrypt it to get the PowerBI token
+                    var key = this.$store.getters.getJwtKey;
+                    var verifyOptions = this.$store.getters.getVerifyOptions;
+                    var legit = jwt.verify(response.data,key, verifyOptions);
                     //embed the report
-                
-                    embedFunction(legit)
-                    
+                    this.$store.commit('embedFunction',legit);
                 }
                 catch (e){
-                    this.passed = false;
-                    this.errorMessage = e.message;
-                    console.log(e);
+                    this.$store.commit('setCurrentError',e.message);
+                    this.$store.commit('setPassed',false);
+                    this.errorMessage = this.$store.getters.getCurrentError;
                 }
-    
             })
             .catch(e => {
-                this.passed = false;
-                this.errorMessage = e.message;
-                console.log("catch") 
-                console.log(e.message)
+                this.$store.commit('setCurrentError',e.message);
+                this.$store.commit('setPassed',false);
+                this.errorMessage = this.$store.getters.getCurrentError;
             })
-
-            function getKEY(){
-                db.collection('settings').doc('backend')
-                .get()
-                .then(doc => {
-                    var thisKEY = doc.data().key;
-                    KEY = thisKEY;
-                })
-                .catch(err => {
-                    this.passed = false;
-                    this.errorMessage = e.message;
-                    console.log('Error getting document', err);
-                });
-            }
-            
-            function embedFunction(embedData) {
-                    
-                    // Create a config object with type of the object, Embed details and Token Type
-                    let reportLoadConfig = {
-                        type: "report",
-                        tokenType: models.TokenType.Embed,
-                        accessToken: embedData.accessToken,
-
-                        // Use other embed report config based on the requirement. We have used the first one for demo purpose
-                        embedUrl: embedData.embedUrl[0].embedUrl,
-
-                    };
-                    console.log(embedData.expiry)
-                    // Use the token expiry to regenerate Embed token for seamless end user experience
-                    // Refer https://aka.ms/RefreshEmbedToken
-                    //tokenExpiry = embedData.expiry;
-
-                    // Embed Power BI report when Access token and Embed URL are available
-                    let report = powerbi.embed(reportContainer, reportLoadConfig);
-                    
-                    // Clear any other loaded handler events
-                    report.off("loaded");
-
-                    // Triggers when a report schema is successfully loaded
-                    report.on("loaded", function () {
-                        console.log("Report load successful");
-                    });
-
-                    // Clear any other rendered handler events
-                    report.off("rendered");
-
-                    // Triggers when a report is successfully embedded in UI
-                    report.on("rendered", function () {
-                        console.log("Report render successful");
-                    });
-
-                    // Clear any other error handler events
-                    report.off("error");
-
-                    // Handle embed errors
-                    report.on("error", function (event) {
-                        this.passed = false;
-                        let errorMsg = event.detail;
-                        this.errorMessage = errorMsg;
-                        console.error(errorMsg);
-                        console.log(errorMsg);
-                        return;
-                    });
-            }
         }
-
-       
     }
 }
 </script>
