@@ -8,16 +8,17 @@ export default{
     passed: true,
   },
   mutations: {
-    setCurrentError: (state,payload) => {
-      state.currentError = payload;
+    setCurrentError: async (state,payload) => {
+      state.currentError = await payload;           //<< do this for all and move all trys and catches to js
     },
     setPassed: (state,payload) => {
       state.passed = payload;
     }
   },
   actions: {
-  },
-  modules: {
+      setCurrentError: (context,payload) => {
+      context.commit('setCurrentError',payload)
+    }
   },
   getters: {
     getCurrentError: state => state.currentError,

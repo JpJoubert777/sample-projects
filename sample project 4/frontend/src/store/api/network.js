@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase';
 import axios from "axios";
+import api from './api';
 const jwt = require('jsonwebtoken');
 Vue.use(Vuex)
 
@@ -13,8 +14,6 @@ export default{
       expiresIn:  "1h",
       algorithm:  ["HS256"]
     }
-  },
-  mutations: {
   },
   actions: {
     async getResponse(state) {
@@ -30,20 +29,21 @@ export default{
         state.commit('setPassed',false);
       });
 
-      state.api = axios.create();
-      var response = await state.api.get("http://localhost:5300/getEmbedToken");
+
       try{
         //get the JWT token and decrypt it to get the PowerBI token
+        var response = await api.embeddedToken();
         var legit = jwt.verify(response.data,state.jwtKey, state.verifyOptions);
         state.commit('embedFunction',legit);
+        await api.helloWorld().then((temp) => {
+          console.log(temp.data);
+        });
       }
       catch (e){
         state.commit('setCurrentError',e.message);
         state.commit('setPassed',false);
       }
     }
-  },
-  modules: {
   },
   getters: {
     getJwtKey: state => state.jwtKey,
