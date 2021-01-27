@@ -6,18 +6,21 @@ import firebase from 'firebase';
 Vue.use(Vuex)
 
 export default {
-  state: {
-  },
   mutations: {
-  },
-  actions: {
     async loginPressed(state, {email, password}) {
-        const val = await firebase.auth().signInWithEmailAndPassword(email,password)
-        router.replace({name: "secret"})
+      try{
+        const val = await firebase.auth().signInWithEmailAndPassword(email,password);
+        router.replace({name: "secret"});
+      }
+      catch (e){
+        this.setCurrentError(e.message);
+        this.setPassed(false);
+      }  
     }
   },
-  modules: {
-  },
-  getters: {
+  actions: {
+    loginPressed(state, {email, password}) {
+      state.commit('loginPressed',{email, password})
+    }
   }
 };

@@ -1,8 +1,8 @@
 
 <template>
-    <div v-if="!this.$store.getters.getPassed" class = "backdrop" >
+    <div v-if="!this.getPassed" class = "backdrop" >
         <div class = "modal-overlay">
-            <p>{{this.$store.getters.getCurrentError}}</p>
+            <p>{{this.getCurrentError}}</p>
         </div>
     </div>
     <div v-else>
@@ -30,24 +30,22 @@ export default {
             error: ''
         }
     },
+    computed: {
+        ...mapGetters([
+            'getPassed',
+            'getCurrentError'
+            ])
+    },
     methods: {
         ...mapActions([
             'registerPressed',
-        ]),
-        ...mapMutations([
             'setCurrentError',
             'setPassed'  
-       ]),
+        ]),
         async pressed() {
-            try {
-                var email = this.email;
-                var password = this.password
-                this.registerPressed({email, password});
-            }
-            catch (e){
-                this.setCurrentError(e.message);
-                this.setPassed(false);
-            }
+            var email = this.email;
+            var password = this.password
+            this.registerPressed({email, password});
         }
     }    
 }

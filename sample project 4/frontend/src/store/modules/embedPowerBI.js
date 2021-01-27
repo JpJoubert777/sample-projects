@@ -57,14 +57,17 @@ export default{
 
       // Handle embed errors
       report.on("error", function (event) {
-        context.commit('setCurrentError','embed error');
-        context.commit('setPassed',false);
+        state.commit('setCurrentError','embed error');
+        state.commit('setPassed',false);
         return;
       });
     },
  
   },
   actions: {
+      embedFunction: (state,embedData) => {
+      state.commit('embedFunction',embedData)  
+    }
   },
   modules: {
   },

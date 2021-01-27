@@ -27,12 +27,10 @@ export default {
     },
     methods: {
         ...mapActions([
-            'getResponse'
-        ]),  
-        ...mapMutations([
+            'getResponse',
             'setCurrentError',
-            'setPassed'  
-        ]),
+            'setPassed' 
+        ])
     },
     mounted(){
         if (this.getPassed) {

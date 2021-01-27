@@ -16,6 +16,6 @@ export default new Vuex.Store({
     register,
     error,
     embedPowerBI,
-    network
+    network,
   }
 });
