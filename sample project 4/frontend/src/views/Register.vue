@@ -1,8 +1,8 @@
 
 <template>
-    <div v-if="!this.getPassed" class = "backdrop" >
+    <div v-if="!this.registerGetPassed" class = "backdrop" >
         <div class = "modal-overlay">
-            <p>{{this.getCurrentError}}</p>
+            <p>{{this.registerGetCurrentError}}</p>
         </div>
     </div>
     <div v-else>
@@ -32,15 +32,13 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getPassed',
-            'getCurrentError'
+            'registerGetPassed',
+            'registerGetCurrentError'
             ])
     },
     methods: {
         ...mapActions([
-            'registerPressed',
-            'setCurrentError',
-            'setPassed'  
+            'registerPressed'
         ])
     }    
 }

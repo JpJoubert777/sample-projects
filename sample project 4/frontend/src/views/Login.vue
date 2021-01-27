@@ -1,7 +1,7 @@
 <template>
-    <div v-if="!this.getPassed" class = "backdrop" >
+    <div v-if="!this.loginGetPassed" class = "backdrop" >
         <div class = "modal-overlay">
-            <p>{{this.getCurrentError}}</p>
+            <p>{{this.loginGetCurrentError}}</p>
         </div>
     </div>
     <div v-else>
@@ -31,15 +31,13 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getPassed',
-            'getCurrentError'
+            'loginGetPassed',
+            'loginGetCurrentError'
             ])
     },
     methods: {
         ...mapActions([
-            'loginPressed',
-            'setCurrentError',
-            'setPassed'  
+            'loginPressed'
         ])
     }
 }

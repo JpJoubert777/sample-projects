@@ -1,7 +1,7 @@
 <template>
-    <div class = "backdrop" v-if="!this.getPassed" >
+    <div class = "backdrop" v-if="!this.networkGetPassed" >
         <div class = "modal-overlay">
-            <p>{{this.getCurrentError}}</p>
+            <p>{{this.networkGetCurrentError}}</p>
         </div>
     </div>
     <div v-else>
@@ -21,20 +21,20 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getPassed',
-            'getCurrentError'
+            'networkGetPassed',
+            'networkGetCurrentError'
             ])
     },
     methods: {
         ...mapActions([
-            'getResponse',
+            'getPowerBiReports',
             'setCurrentError',
             'setPassed' 
         ])
     },
     mounted(){
-        if (this.getPassed) {
-            this.getResponse();   
+        if (this.networkGetPassed) {
+            this.getPowerBiReports();   
         }
     }
 }
