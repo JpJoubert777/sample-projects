@@ -34,13 +34,7 @@ export default {
     },
     mounted(){
         if (this.getPassed) {
-            try{
-                this.getResponse();  
-            }
-            catch(e) {
-                this.setCurrentError(e.message);
-                this.setPassed(false);
-            }
+            this.getResponse();   
         }
     }
 }

@@ -15,8 +15,8 @@ export default {
         router.replace({name: "secret"})
       }
       catch (e){
-        this.setCurrentError(e.message);
-        this.setPassed(false);
+        state.commit.setCurrentError(e.message);
+        state.commit.setPassed(false);
       } 
     }
   },

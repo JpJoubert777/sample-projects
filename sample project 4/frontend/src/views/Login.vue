@@ -6,7 +6,7 @@
     </div>
     <div v-else>
         Login
-        <form @submit.prevent="pressed">
+        <form @submit.prevent="loginPressed({email, password})">
             <div class="login">
                 <input type = "email" placeholder = "login" v-model="email">
             </div>
@@ -40,12 +40,7 @@ export default {
             'loginPressed',
             'setCurrentError',
             'setPassed'  
-        ]),
-        async pressed() {
-            var email = this.email;
-            var password = this.password
-            this.loginPressed({email, password});
-        }
+        ])
     }
 }
 </script>

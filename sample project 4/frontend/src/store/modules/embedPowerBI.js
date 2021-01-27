@@ -66,7 +66,13 @@ export default{
   },
   actions: {
       embedFunction: (state,embedData) => {
-      state.commit('embedFunction',embedData)  
+        try{
+          state.commit('embedFunction',embedData)  
+        }
+        catch(e) {
+          state.commit.setCurrentError(e.message);
+          state.commit.setPassed(false);
+        }
     }
   },
   modules: {

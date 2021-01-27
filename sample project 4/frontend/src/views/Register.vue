@@ -7,7 +7,7 @@
     </div>
     <div v-else>
         <div v-if = "error" class="error">{{error.message}} </div>
-        <form @submit.prevent="pressed">
+        <form @submit.prevent="registerPressed({email, password})">
             Register
             <div class="email">
                 <input type = "email" v-model="email" placeholder="email">
@@ -41,12 +41,7 @@ export default {
             'registerPressed',
             'setCurrentError',
             'setPassed'  
-        ]),
-        async pressed() {
-            var email = this.email;
-            var password = this.password
-            this.registerPressed({email, password});
-        }
+        ])
     }    
 }
 </script>
