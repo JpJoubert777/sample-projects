@@ -1,8 +1,7 @@
-
 <template>
-    <div class = "backdrop" v-if="!this.$store.getters.getPassed" >
+    <div class = "backdrop" v-if="!this.getPassed" >
         <div class = "modal-overlay">
-            <p>{{this.$store.getters.getCurrentError}}</p>
+            <p>{{this.getCurrentError}}</p>
         </div>
     </div>
     <div v-else>
@@ -10,47 +9,40 @@
         </section>
     </div>
 </template>
-
-
 <script>
-import * as pbi from 'powerbi-client';
-import axios from "axios";
-import firebase from 'firebase';
-const jwt = require('jsonwebtoken');
+
+import { mapActions, mapGetters, mapMutations } from "vuex";
+
 export default {
     name:'secret', 
     data() {
         return { 
         }
     },
+    computed: {
+        ...mapGetters([
+            'getPassed',
+            'getCurrentError'
+            ])
+    },
     methods: {
+        ...mapActions([
+            'getResponse'
+        ]),  
+        ...mapMutations([
+            'setCurrentError',
+            'setPassed'  
+        ]),
     },
     mounted(){
-        if (this.$store.getters.getPassed) {
-            //get JWT key from firestore
-            this.$store.commit('setJwtKey');
-
-            axios.get(`http://localhost:5300/getEmbedToken`)
-            .then(response => {
-                try{
-                    //get the JWT token and decrypt it to get the PowerBI token
-                    var key = this.$store.getters.getJwtKey;
-                    var verifyOptions = this.$store.getters.getVerifyOptions;
-                    var legit = jwt.verify(response.data,key, verifyOptions);
-                    //embed the report
-                    this.$store.commit('embedFunction',legit);
-                }
-                catch (e){
-                    this.$store.commit('setCurrentError',e.message);
-                    this.$store.commit('setPassed',false);
-                    this.errorMessage = this.$store.getters.getCurrentError;
-                }
-            })
-            .catch(e => {
-                this.$store.commit('setCurrentError',e.message);
-                this.$store.commit('setPassed',false);
-                this.errorMessage = this.$store.getters.getCurrentError;
-            })
+        if (this.getPassed) {
+            try{
+                this.getResponse();  
+            }
+            catch(e) {
+                this.setCurrentError(e.message);
+                this.setPassed(false);
+            }
         }
     }
 }

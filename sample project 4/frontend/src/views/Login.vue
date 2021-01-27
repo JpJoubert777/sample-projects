@@ -1,5 +1,10 @@
 <template>
-    <div>
+    <div v-if="!this.$store.getters.getPassed" class = "backdrop" >
+        <div class = "modal-overlay">
+            <p>{{this.$store.getters.getCurrentError}}</p>
+        </div>
+    </div>
+    <div v-else>
         Login
         <form @submit.prevent="pressed">
             <div class="login">
@@ -10,36 +15,40 @@
             </div>
             <button class = "md-raised" type="submit">Login</button>
         </form>
-        <div v-if = "error" class="error">{{error.message}} </div>
-
+        <div v-if = "error" class="error">{{error}} </div>
     </div>
 </template>
 
 <script>
-import firebase from 'firebase'
+import { mapActions, mapGetters, mapMutations } from "vuex";
 export default {
     data(){
         return {
-            email : '',
-            password: '',
-            error: ''
+            email : "",
+            password: "",
+            error: ""
         }
     },
     methods: {
+        ...mapActions([
+            'loginPressed',
+        ]),
+        ...mapMutations([
+            'setCurrentError',
+            'setPassed'  
+       ]),
         async pressed() {
-            try{
-            const val = await firebase.auth().signInWithEmailAndPassword(this.email,this.password)
-            console.log(val);
-            this.$router.replace({name: "secret"})
-            }catch(err){
-                console.log(err)
+            try {
+                var email = this.email;
+                var password = this.password
+                this.loginPressed({email, password});
             }
-
-            
+            catch (e){
+                this.setCurrentError(e.message);
+                this.setPassed(false);
+            }
         }
-        
     }
-    
 }
 </script>
 
@@ -59,5 +68,21 @@ button {
     height: 75px;
     font-size: 100%;
 }
-
+.backdrop{
+    top: 0;
+    position: fixed;
+    background: rgba(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+}
+.modal-overlay {
+  width: 500px;
+  margin: 0px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px 3px;
+  transition: all 0.2s ease-in;
+  font-family: Helvetica, Arial, sans-serif;
+}
 </style>
