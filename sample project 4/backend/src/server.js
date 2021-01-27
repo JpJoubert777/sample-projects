@@ -6,6 +6,7 @@
 let path = require('path');
 let embedToken = require(__dirname + '/embedConfigService.js');
 const utils = require(__dirname + "/utils.js");
+const jwtFirebase = require(__dirname + "/jwtFirebase.js");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
@@ -47,44 +48,7 @@ app.get('/getEmbedToken', async function (req, res) {
     // Get the details like Embed URL, Access token and Expiry
     let result = await embedToken.getEmbedInfo();
 
-    //init connection to database containing jwt key
-    var admin = require("firebase-admin");
-    var serviceAccount = require(path.join(__dirname +"/sample-project-4-9e45a-firebase-adminsdk-b7pk7-866f8e2d0d.json"));
-    if (admin.apps.length == 0){
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-    }
-        
-    const db = admin.firestore();
-    
-    //get key from firestore
-    var KEY = "";
-    const ref = await db.collection('settings').doc('backend')
-    .get().then(doc => {
-        KEY = doc.data().key;
-    })
-    .catch(err => {
-        console.log('Error getting document', err);
-        return false;
-    });
-    
-    // SIGNING OPTIONS
-    var signOptions = {
-        algorithm:  "HS256",
-        expiresIn:  "1h",
-    };
-
-    //only kept in case you want to see the problems that occur with the other encryption algorithms
-    //KEY  = fs.readFileSync(path.join(__dirname +'/private.key'), 'utf8');
-    
-    //encrypt with JWT token
-    try{
-        var token = jwt.sign(result, KEY, signOptions);
-    }
-    catch (e){
-        console.log(e.message);
-    }
+    var token = await jwtFirebase.getJwt(result);
     
     res.send(token);
 });
