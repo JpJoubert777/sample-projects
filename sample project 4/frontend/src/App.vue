@@ -4,15 +4,14 @@
     <div v-if="registerGetPassed && loginGetPassed && networkGetPassed" id="nav">
       <md-card>
       <md-tabs md-sync-route>
-      <md-tab id="Login" md-label="Login" to="/Login" exact></md-tab>
-      <md-tab id="Report" md-label="Report" to="/secret" exact></md-tab>
-      <md-tab id="Register" md-label="Register" to="/Register" exact></md-tab>
+      <md-tab  id="Login" md-label="Login" to="/Login" exact></md-tab>
+      <md-tab  id="Register" md-label="Register" to="/Register" exact></md-tab>
+      <md-tab  id="Report" md-label="Report" to="/secret" exact></md-tab>
       </md-tabs>
       </md-card>
     </div>
     <router-view/>
   </div>
- 
 </template>
 
 <script>
@@ -24,7 +23,7 @@ export default {
     ...mapGetters([
         'loginGetPassed',
         'registerGetPassed',
-         'networkGetPassed'
+        'networkGetPassed',
     ])
   },
 }

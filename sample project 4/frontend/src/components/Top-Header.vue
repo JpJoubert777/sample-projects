@@ -8,7 +8,7 @@
             <div v-else>Logged out </div>
             
             <div v-if="loggedIn">
-                <md-button class = "md-raised" @click="signOut">Sign out</md-button>
+                <md-button class = "md-raised" @click="signOutPressed">Sign out</md-button>
             </div>   
             </md-card> 
         </div>
@@ -45,7 +45,10 @@ export default {
             }catch(err){
                 console.log(err)
             }          
-        }
+        },
+        ...mapActions([
+            'signOutPressed',
+        ])
     }
 }
 </script>

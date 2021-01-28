@@ -9,6 +9,7 @@ export default {
   state: {
     loginCurrentError: "unknown error",
     loginPassed: true,
+  
   },
   mutations: {
     loginSetCurrentError:  (state,payload) => {
@@ -20,16 +21,26 @@ export default {
     async loginPressed(state, payload) {
       const val = await firebase.auth().signInWithEmailAndPassword(payload.email,payload.password).then(() => {
         router.replace({name: "secret"});
+
       })
       .catch(e => {
         state.loginCurrentError = e.message;
         state.loginPassed = false;
+      })
+    },
+    async signOutPressed(state) { 
+      const data = await firebase.auth().signOut().then(() => {
+        router.replace({name:"login"})
+
       })
     }
   },
   actions: {
     loginPressed(state, payload) {
         state.commit('loginPressed',payload)
+    },
+    signOutPressed(state, payload) {
+      state.commit('signOutPressed')
     },
     loginErrorReset(state, payload) {
       state.commit('loginSetCurrentError',"unknown error")
@@ -39,6 +50,7 @@ export default {
   getters: {
     loginGetCurrentError: state => state.loginCurrentError,
     loginGetPassed: state => state.loginPassed,
+    loginCompleted: state => state.loginCompleted
   }
   
 };

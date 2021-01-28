@@ -6,29 +6,27 @@
         </div>
     </div>
     <div v-else>
-        <div v-if = "error" class="error">{{error.message}} </div>
-        <form @submit.prevent="registerPressed({email, password})">
-            <md-card>
-                 <md-card-header>
+        <md-card class ="md-layout-item" >
+            <form @submit.prevent="registerPressed({email, password})">
+                <md-card-header>
                     <span class="md-display-3">Register</span>
-                 </md-card-header>
-            </md-card>
-            <md-card md-with-hover>
-                <div class="email">
-                    <md-field>
-                        <md-input type = "email" v-model="email" placeholder="email"/>
-                    </md-field>
-                </div>
-            </md-card>
-            <md-card md-with-hover>
-                <div class = "password">
-                    <md-field>
-                        <md-input type = "password" v-model="password" placeholder="password"/>
-                    </md-field>
-                </div>
-            </md-card>
-            <md-button class = "md-elevation-24" type="submit">Register</md-button>
-        </form >
+                </md-card-header>
+                <md-card-content>
+                    <div class="email">
+                        <md-field>
+                            <md-input type = "email" v-model="email" placeholder="email"/>
+                        </md-field>
+                    </div>
+                    <div class = "password">
+                        <md-field>
+                            <md-input type = "password" v-model="password" placeholder="password"/>
+                        </md-field>
+                    </div>
+                    <md-button class = "md-elevation-24" type="submit">Register</md-button>
+                </md-card-content>
+            </form >
+        </md-card>
+        <div v-if = "error" class="error">{{error.message}} </div>
     </div>
 </template>
 

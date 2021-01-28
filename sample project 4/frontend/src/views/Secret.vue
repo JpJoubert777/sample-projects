@@ -9,6 +9,7 @@
         <section id="report-container" class="embed-container" >
         </section>
     </div>
+    
 </template>
 <script>
 
@@ -23,7 +24,7 @@ export default {
     computed: {
         ...mapGetters([
             'networkGetPassed',
-            'networkGetCurrentError'
+            'networkGetCurrentError',
             ])
     },
     methods: {  

@@ -18,6 +18,7 @@ export default{
     },
     networkCurrentError: "unknown error",
     networkPassed: true,
+    reportLoaded: false
   },
   mutations: {
     networkSetCurrentError:  (state,payload) => {
@@ -39,14 +40,16 @@ export default{
           state.networkCurrentError =  err.message; 
           state.networkPassed =  false;   
         });  
+        
         //get the JWT token and decrypt it to get the PowerBI token
         var response = await api.embeddedToken();
+        state.reportLoaded = true;
         var embedData = await jwt.verify(response.data,state.jwtKey, state.verifyOptions);
-
+        
         let models = pbi.models;
         
         let reportContainer = document.getElementById('report-container');
-
+        
         // Initialize iframe for embedding report
         powerbi.bootstrap(reportContainer, { type: "report" });
         
@@ -63,7 +66,7 @@ export default{
         // Use the token expiry to regenerate Embed token for seamless end user experience
         // Refer https://aka.ms/RefreshEmbedToken
         //tokenExpiry = embedData.expiry;
-
+        
         // Embed Power BI report when Access token and Embed URL are available
         let report = powerbi.embed(reportContainer, reportLoadConfig);
         // Clear any other loaded handler events
@@ -78,6 +81,7 @@ export default{
         report.on("rendered", function () {
             console.log("Report render successful");
         });
+        
         // Clear any other error handler events
         report.off("error");
       }
@@ -95,6 +99,7 @@ export default{
       state.commit('networkSetPassed',payload)
     },
     getPowerBiReports: (state) => {
+        
         state.commit('embeddedPowerBi');
     },
     networkErrorReset(state, payload) {
@@ -106,6 +111,7 @@ export default{
     getJwtKey: state => state.jwtKey,
     getVerifyOptions: state => state.verifyOptions,
     networkGetCurrentError: state => state.networkCurrentError,
-    networkGetPassed: state => state.networkPassed
+    networkGetPassed: state => state.networkPassed,
+    reportIsLoaded: state => state.reportLoaded
   }
 };
