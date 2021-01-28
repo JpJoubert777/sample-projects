@@ -1,27 +1,39 @@
-
 <template>
     <div v-if="!this.registerGetPassed" class = "backdrop" >
         <div class = "modal-overlay">
             <p>{{this.registerGetCurrentError}}</p>
+            <md-button class = "md-elevation-24" @click="registerErrorReset"> ok </md-button>
         </div>
     </div>
     <div v-else>
         <div v-if = "error" class="error">{{error.message}} </div>
         <form @submit.prevent="registerPressed({email, password})">
-            Register
-            <div class="email">
-                <input type = "email" v-model="email" placeholder="email">
-            </div>
-            <div class = "password">
-                <input type = "password" v-model="password" placeholder="password">
-            </div>
-            <button class = "md-raised" type="submit">Register</button>
+            <md-card>
+                 <md-card-header>
+                    <span class="md-display-3">Register</span>
+                 </md-card-header>
+            </md-card>
+            <md-card md-with-hover>
+                <div class="email">
+                    <md-field>
+                        <md-input type = "email" v-model="email" placeholder="email"/>
+                    </md-field>
+                </div>
+            </md-card>
+            <md-card md-with-hover>
+                <div class = "password">
+                    <md-field>
+                        <md-input type = "password" v-model="password" placeholder="password"/>
+                    </md-field>
+                </div>
+            </md-card>
+            <md-button class = "md-elevation-24" type="submit">Register</md-button>
         </form >
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters} from "vuex";
 export default {
     data() {
         return {
@@ -38,7 +50,8 @@ export default {
     },
     methods: {
         ...mapActions([
-            'registerPressed'
+            'registerPressed',
+            'registerErrorReset'
         ])
     }    
 }
@@ -76,5 +89,9 @@ button {
   box-shadow: 0 2px 8px 3px;
   transition: all 0.2s ease-in;
   font-family: Helvetica, Arial, sans-serif;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

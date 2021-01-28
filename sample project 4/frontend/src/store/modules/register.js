@@ -10,6 +10,12 @@ export default {
     registerPassed: true,
   },
   mutations: {
+    registerSetCurrentError:  (state,payload) => {
+      state.registerCurrentError =  payload;         
+    },
+    registerSetPassed:  (state,payload) => {
+      state.registerPassed =  payload;
+    },
     registerPressed: (state, payload) => {
       firebase.auth().createUserWithEmailAndPassword(payload.email,payload.password).then(() => {
       router.replace({name: "secret"})
@@ -23,6 +29,10 @@ export default {
   actions: {
     registerPressed:(state, payload) => {
       state.commit('registerPressed',payload)
+    },
+    registerErrorReset(state, payload) {
+      state.commit('registerSetCurrentError',"unknown error")
+      state.commit('registerSetPassed',true)
     }
   },
   getters: {

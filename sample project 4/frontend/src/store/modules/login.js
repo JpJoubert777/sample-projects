@@ -31,11 +31,9 @@ export default {
     loginPressed(state, payload) {
         state.commit('loginPressed',payload)
     },
-    loginSetCurrentError: (state,payload) => {
-        state.commit('loginSetCurrentError',payload)
-    },
-    setPassed: (state,payload) => {
-        state.commit('loginSetPassed',payload)
+    loginErrorReset(state, payload) {
+      state.commit('loginSetCurrentError',"unknown error")
+      state.commit('loginSetPassed',true)
     }
   },
   getters: {

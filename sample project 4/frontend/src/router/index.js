@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Secret from '../views/Secret.vue'
 import Register from '../views/Register.vue'
 import firebase from 'firebase'
-import $ from 'jquery'
+
 Vue.use(VueRouter)
 
 const routes = [

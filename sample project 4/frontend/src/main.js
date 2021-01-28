@@ -4,12 +4,11 @@ import router from './router'
 import store from './store'
 import axios from "axios"
 import firebase from "firebase/app"
-import $ from 'jquery'
-import 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import * as pbi from 'powerbi-client';
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/black-green-light.css'
 
-window.$ = $;
+Vue.use(VueMaterial);
 Vue.use(firebase) 
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false

@@ -96,6 +96,10 @@ export default{
     },
     getPowerBiReports: (state) => {
         state.commit('embeddedPowerBi');
+    },
+    networkErrorReset(state, payload) {
+      state.commit('networkSetCurrentError',"unknown error")
+      state.commit('networkSetPassed',true)
     }
   },
   getters: {

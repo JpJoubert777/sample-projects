@@ -2,6 +2,7 @@
     <div class = "backdrop" v-if="!this.networkGetPassed" >
         <div class = "modal-overlay">
             <p>{{this.networkGetCurrentError}}</p>
+            <md-button class = "md-elevation-24" @click="networkErrorReset"> ok </md-button>
         </div>
     </div>
     <div v-else>
@@ -11,7 +12,7 @@
 </template>
 <script>
 
-import { mapActions, mapGetters, mapMutations } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
     name:'secret', 
@@ -25,9 +26,10 @@ export default {
             'networkGetCurrentError'
             ])
     },
-    methods: {
+    methods: {  
         ...mapActions([
-            'getPowerBiReports'
+            'getPowerBiReports',
+            'networkErrorReset'
         ])
     },
     mounted(){
@@ -63,6 +65,10 @@ export default {
   box-shadow: 0 2px 8px 3px;
   transition: all 0.2s ease-in;
   font-family: Helvetica, Arial, sans-serif;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
 
