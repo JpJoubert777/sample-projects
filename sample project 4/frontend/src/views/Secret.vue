@@ -27,9 +27,7 @@ export default {
     },
     methods: {
         ...mapActions([
-            'getPowerBiReports',
-            'setCurrentError',
-            'setPassed' 
+            'getPowerBiReports'
         ])
     },
     mounted(){

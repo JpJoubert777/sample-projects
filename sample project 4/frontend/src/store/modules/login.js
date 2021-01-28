@@ -43,32 +43,13 @@ export default {
   },
   actions: {
     loginPressed(state, {email, password}) {
-      try {
         state.commit('loginPressed',{email, password})
-      }
-      catch (e){
-        state.commit.loginSetCurrentError(e.message);
-        state.commit.loginSetPassed(false);
-      } 
     },
     loginSetCurrentError: (state,payload) => {
-      try {
         state.commit('loginSetCurrentError',payload)
-      }
-      catch (e){
-        state.commit.loginSetCurrentError(e.message);
-        state.commit.loginSetPassed(false);
-      }
     },
     setPassed: (state,payload) => {
-      try {
         state.commit('loginSetPassed',payload)
-      }
-      catch (e){
-        state.commit.loginSetCurrentError(e.message);
-        state.commit.loginSetPassed(false);
-      }
-    }
   },
   getters: {
     loginGetCurrentError: state => state.loginCurrentError,

@@ -12,61 +12,30 @@ export default {
   },
   mutations: {
     registerSetCurrentError:  (state,payload) => {
-      try {
-        state.registerCurrentError =  payload; 
-      }
-      catch (e){
-        state.registerCurrentError = e.message;
-        state.registerPassed = false;
-      }          
+      state.registerCurrentError =  payload;     
     },
     registerSetPassed:  (state,payload) => {
-      try {
-        state.registerPassed =  payload;
-      }
-      catch (e){
-        state.registerCurrentError = e.message;
-        state.registerPassed = false;
-      } 
+      state.registerPassed =  payload;
     },
-    async registerPressed(state, {email, password}) {
-      try {
-        const val = await firebase.auth().createUserWithEmailAndPassword(email,password)
-        router.replace({name: "secret"})
-      }
-      catch (e){
+    registerPressed: (state, payload) => {
+      firebase.auth().createUserWithEmailAndPassword(payload.email,payload.password).then(() => {
+      router.replace({name: "secret"})
+      })
+      .catch(e => {
         state.registerCurrentError = e.message;
         state.registerPassed = false;
-      } 
+      })  
     }
   },
   actions: {
-    registerPressed(state, {email, password}) {
-      try {
-        state.commit('registerPressed',{email, password})
-      }
-      catch (e){
-        state.commit.SetCurrentError(e.message);
-        state.commit.registerSetPassed(false);
-      }
+    registerPressed:(state, payload) => {
+      state.commit('registerPressed',payload)
     },
     registerSetCurrentError: (state,payload) => {
-      try {
-        state.commit('registerSetCurrentError',payload)
-      }
-      catch (e){
-        state.commit.SetCurrentError(e.message);
-        state.commit.registerSetPassed(false);
-      }
+      state.commit('registerSetCurrentError',payload)
     },
     registerSetPassed: (state,payload) => {
-      try {
-        state.commit('registerSetPassed',payload)
-      }
-      catch (e){
-        state.commit.SetCurrentError(e.message);
-        state.commit.registerSetPassed(false);
-      }
+      state.commit('registerSetPassed',payload)
     }
   },
   getters: {

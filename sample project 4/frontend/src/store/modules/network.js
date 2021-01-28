@@ -26,7 +26,7 @@ export default{
     networkSetPassed:  (state,payload) => {
       state.networkPassed =  payload;
     },
-    embedFunction: async (state)  => {
+    embeddedPowerBi: async (state)  => {
       try {
         //get JWT key from firestore
         const db = firebase.firestore(); 
@@ -36,7 +36,7 @@ export default{
           state.jwtKey = doc.data().key;
         })
         .catch(err => {
-          state.networkCurrentError =  e.message; 
+          state.networkCurrentError =  err.message; 
           state.networkPassed =  false;   
         });  
         //get the JWT token and decrypt it to get the PowerBI token
@@ -60,7 +60,6 @@ export default{
           embedUrl: embedData.embedUrl[0].embedUrl,
 
         };
-        //console.log(embedData.expiry)
         // Use the token expiry to regenerate Embed token for seamless end user experience
         // Refer https://aka.ms/RefreshEmbedToken
         //tokenExpiry = embedData.expiry;
@@ -86,7 +85,6 @@ export default{
         state.networkCurrentError =  e.message; 
         state.networkPassed =  false;    
       }
-
     }
   },
   actions: {
@@ -97,13 +95,7 @@ export default{
       state.commit('networkSetPassed',payload)
     },
     getPowerBiReports: (state) => {
-      try{
-        state.commit('embedFunction');
-      }
-      catch (e){
-        state.commit.loginSetCurrentError(e.message);
-        state.commit.loginSetPassed(false);  
-      }
+        state.commit('embeddedPowerBi');
     }
   },
   getters: {
