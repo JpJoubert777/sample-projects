@@ -12,44 +12,31 @@ export default {
   },
   mutations: {
     loginSetCurrentError:  (state,payload) => {
-      try {
-        state.loginCurrentError =  payload;   
-      }
-      catch (e){
-        state.loginCurrentError = e.message;
-        state.loginPassed = false;
-      }         
+      state.loginCurrentError =  payload;         
     },
     loginSetPassed:  (state,payload) => {
-      try {
-        state.loginPassed =  payload;
-      }
-      catch (e){
-        state.loginCurrentError = e.message;
-        state.loginPassed = false;
-      } 
+      state.loginPassed =  payload;
     },
-    async loginPressed(state, {email, password}) {
-      try {
-        const val = await firebase.auth().signInWithEmailAndPassword(email,password);
+    async loginPressed(state, payload) {
+      const val = await firebase.auth().signInWithEmailAndPassword(payload.email,payload.password).then(() => {
         router.replace({name: "secret"});
-      }
-      catch (e){
+      })
+      .catch(e => {
         state.loginCurrentError = e.message;
         state.loginPassed = false;
-      } 
-
+      })
     }
   },
   actions: {
-    loginPressed(state, {email, password}) {
-        state.commit('loginPressed',{email, password})
+    loginPressed(state, payload) {
+        state.commit('loginPressed',payload)
     },
     loginSetCurrentError: (state,payload) => {
         state.commit('loginSetCurrentError',payload)
     },
     setPassed: (state,payload) => {
         state.commit('loginSetPassed',payload)
+    }
   },
   getters: {
     loginGetCurrentError: state => state.loginCurrentError,
