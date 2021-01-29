@@ -18,7 +18,17 @@ export default{
     },
     networkCurrentError: "unknown error",
     networkPassed: true,
-    reportLoaded: false
+    reportLoaded: false,
+    report: null,
+    filter: {
+      $schema: "http://powerbi.com/product/schema#basic",
+      target: {
+          table: "num_students_by_institution",
+          column: "institution_name"
+      },
+      operator: "In",
+      values: ["Microcert"]
+    }
   },
   mutations: {
     networkSetCurrentError:  (state,payload) => {
@@ -26,6 +36,21 @@ export default{
     },
     networkSetPassed:  (state,payload) => {
       state.networkPassed =  payload;
+    },
+    setFilter: async (state) => {
+      try{
+        
+        const pages = await state.report.getPages();
+        console.log(pages);
+        await pages[0].setActive();
+        
+        await state.report.setPage("ReportSection");
+        state.report.setFilters([state.filter]);
+        console.log("Report filter was set.");
+      }
+      catch(errors){
+        console.log(errors);
+      }
     },
     embeddedPowerBi: async (state)  => {
       try {
@@ -53,7 +78,6 @@ export default{
         
         // Initialize iframe for embedding report
         powerbi.bootstrap(reportContainer, { type: "report" });
-        
         // Create a config object with type of the object, Embed details and Token Type
         let reportLoadConfig = {
           type: "report",
@@ -68,23 +92,29 @@ export default{
         // Refer https://aka.ms/RefreshEmbedToken
         //tokenExpiry = embedData.expiry;
         
+        
+        // Build the filter you want to use. For more information, See Constructing
+        // Filters in https://github.com/Microsoft/PowerBI-JavaScript/wiki/Filters.
+  
         // Embed Power BI report when Access token and Embed URL are available
-        let report = powerbi.embed(reportContainer, reportLoadConfig);
+        state.report = powerbi.embed(reportContainer, reportLoadConfig);
+        
         // Clear any other loaded handler events
-        report.off("loaded");
+        state.report.off("loaded");
         // Triggers when a report schema is successfully loaded
-        report.on("loaded", function () {
+        state.report.on("loaded", function () {
             console.log("Report load successful");
         });
         // Clear any other rendered handler events
-        report.off("rendered");
+        state.report.off("rendered");
         // Triggers when a report is successfully embedded in UI
-        report.on("rendered", function () {
+        state.report.on("rendered", function () {
             console.log("Report render successful");
         });
         
         // Clear any other error handler events
-        report.off("error");
+        state.report.off("error");
+
       }
       catch (e){
         state.networkCurrentError =  e.message; 
@@ -100,8 +130,10 @@ export default{
       state.commit('networkSetPassed',payload)
     },
     getPowerBiReports: (state) => {
-        
         state.commit('embeddedPowerBi');
+    },
+    setFilter: (state) => {
+      state.commit('setFilter');
     },
     networkErrorReset(state, payload) {
       state.commit('networkSetCurrentError',"unknown error")

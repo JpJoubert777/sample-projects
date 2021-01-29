@@ -38,8 +38,6 @@ app.get('/getEmbedToken', async function (req, res) {
     // Validate whether all the required configurations are provided in config.json
     configCheckResult = utils.validateConfig();
     if (configCheckResult) {
-        console.log(configCheckResult)
-        
         return {
             "status": 400,
             "error": configCheckResult
@@ -53,10 +51,4 @@ app.get('/getEmbedToken', async function (req, res) {
     res.send(token);
 });
 
-app.get('/helloWorld', async function (req, res) {
-    res.send("helloWorld");
- 
-});
-
 app.listen(port, () => console.log(`Listening on port ${port}`));
-

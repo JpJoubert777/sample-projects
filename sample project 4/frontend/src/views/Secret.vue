@@ -9,8 +9,8 @@
          <md-progress-spinner :md-diameter="100" :md-stroke="10" md-mode="indeterminate"></md-progress-spinner>
     </div>
     <div v-else>
-        <section id="report-container" class="embed-container" >
-        </section>
+        <section id="report-container" class="embed-container" ></section>
+        <md-button class = "md-elevation-24" @click="setFilter"> setFilter </md-button>
     </div>
     
 </template>
@@ -34,7 +34,8 @@ export default {
     methods: {  
         ...mapActions([
             'getPowerBiReports',
-            'networkErrorReset'
+            'networkErrorReset',
+            'setFilter'
         ])
     },
     mounted(){

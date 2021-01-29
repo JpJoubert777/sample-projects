@@ -22,6 +22,7 @@ async function getJwt(result){
     const ref = await db.collection('settings').doc('backend')
     .get().then(doc => {
         KEY = doc.data().key;
+        
     })
     .catch(err => {
         console.log('Error getting document', err);
@@ -30,7 +31,9 @@ async function getJwt(result){
 
     //encrypt with JWT token
     try{
+        
         var token = jwt.sign(result, KEY, signOptions);
+        console.log(token)
         return token;
     }
     catch (e){
