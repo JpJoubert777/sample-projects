@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Secret from '../views/Secret.vue'
 import Register from '../views/Register.vue'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 
 Vue.use(VueRouter)
 

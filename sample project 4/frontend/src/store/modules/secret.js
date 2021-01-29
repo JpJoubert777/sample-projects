@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import api from '../api/api';
 import * as pbi from 'powerbi-client';
 
@@ -30,6 +30,7 @@ export default{
     embeddedPowerBi: async (state)  => {
       try {
         //get JWT key from firestore
+        
         const db = firebase.firestore(); 
         db.collection('settings').doc('backend')
         .get()

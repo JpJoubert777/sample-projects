@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import router from '@/router/index.js'
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 Vue.use(Vuex)
 export default {

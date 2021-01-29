@@ -5,6 +5,9 @@
             <md-button class = "md-elevation-24" @click="networkErrorReset"> ok </md-button>
         </div>
     </div>
+    <div v-else-if="!reportIsLoaded">
+         <md-progress-spinner :md-diameter="100" :md-stroke="10" md-mode="indeterminate"></md-progress-spinner>
+    </div>
     <div v-else>
         <section id="report-container" class="embed-container" >
         </section>
@@ -25,6 +28,7 @@ export default {
         ...mapGetters([
             'networkGetPassed',
             'networkGetCurrentError',
+            'reportIsLoaded'
             ])
     },
     methods: {  

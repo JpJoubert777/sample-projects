@@ -1,11 +1,5 @@
 <template>
-    <div v-if="!this.registerGetPassed" class = "backdrop" >
-        <div class = "modal-overlay">
-            <p>{{this.registerGetCurrentError}}</p>
-            <md-button class = "md-elevation-24" @click="registerErrorReset"> ok </md-button>
-        </div>
-    </div>
-    <div v-else>
+    <div>
         <md-card class ="md-layout-item" >
             <form @submit.prevent="registerPressed({email, password})">
                 <md-card-header>
@@ -27,6 +21,13 @@
             </form >
         </md-card>
         <div v-if = "error" class="error">{{error.message}} </div>
+        <md-dialog :md-active.sync="!this.registerGetPassed"> 
+            <md-dialog-title>Preferences</md-dialog-title>
+                <p>{{this.registerGetCurrentError}}</p>  
+                <md-dialog-actions>  
+                    <md-button class="md-primary" @click="registerErrorReset">Close</md-button>
+                </md-dialog-actions>
+        </md-dialog>  
     </div>
 </template>
 
