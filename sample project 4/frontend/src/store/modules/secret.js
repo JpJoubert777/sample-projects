@@ -19,16 +19,7 @@ export default{
     networkCurrentError: "unknown error",
     networkPassed: true,
     reportLoaded: false,
-    report: null,
-    filter: {
-      $schema: "http://powerbi.com/product/schema#basic",
-      target: {
-          table: "num_students_by_institution",
-          column: "institution_name"
-      },
-      operator: "In",
-      values: ["Microcert"]
-    }
+    report: null
   },
   mutations: {
     networkSetCurrentError:  (state,payload) => {
@@ -37,19 +28,36 @@ export default{
     networkSetPassed:  (state,payload) => {
       state.networkPassed =  payload;
     },
-    setFilter: async (state) => {
+    setFilter: async (state,payload) => {
       try{
-        
+        var filter ={
+          $schema: "http://powerbi.com/product/schema#basic",
+          target: {
+              table: payload.table,
+              column: payload.column
+          },
+          operator: "In",
+          values: [payload.filter]
+        }
         const pages = await state.report.getPages();
-        console.log(pages);
-        await pages[0].setActive();
-        
-        await state.report.setPage("ReportSection");
-        state.report.setFilters([state.filter]);
-        console.log("Report filter was set.");
+        await pages[payload.pageNum].setActive();
+        //console.log("Page was set to " + payload.pageNum);
+    
+        state.report.setFilters([filter]);
+        //console.log("Filter was set to " + payload.filter);
       }
-      catch(errors){
-        console.log(errors);
+      catch(e){
+        state.networkCurrentError =  e.message; 
+        state.networkPassed =  false;
+      }
+    },
+    removeFilters: async (state) => {
+      try{
+        await state.report.removeFilters();
+      }
+      catch(e){
+        state.networkCurrentError =  e.message; 
+        state.networkPassed =  false;
       }
     },
     embeddedPowerBi: async (state)  => {
@@ -111,7 +119,11 @@ export default{
         state.report.on("rendered", function () {
             console.log("Report render successful");
         });
-        
+        // VERY important for filtering on different pages to work
+        state.report.on('pageChanged', function (event) {
+          const page = event.detail.newPage;
+          state.report.selectedPage = page;
+       });
         // Clear any other error handler events
         state.report.off("error");
 
@@ -132,8 +144,11 @@ export default{
     getPowerBiReports: (state) => {
         state.commit('embeddedPowerBi');
     },
-    setFilter: (state) => {
-      state.commit('setFilter');
+    setFilter: (state,payload) => {
+      state.commit('setFilter',payload);
+    },
+    removeFilters: (state) => {
+      state.commit('removeFilters');
     },
     networkErrorReset(state, payload) {
       state.commit('networkSetCurrentError',"unknown error")
