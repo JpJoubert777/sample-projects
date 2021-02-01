@@ -19,7 +19,9 @@ export default{
     networkCurrentError: "unknown error",
     networkPassed: true,
     reportLoaded: false,
-    report: null
+    report: null,
+    pageNum : 0,
+    dropdown: {}
   },
   mutations: {
     networkSetCurrentError:  (state,payload) => {
@@ -41,8 +43,8 @@ export default{
         }
         const pages = await state.report.getPages();
         await pages[payload.pageNum].setActive();
-        //console.log("Page was set to " + payload.pageNum);
-    
+        state.pageNum = payload.pageNum
+        console.log("pageNum was set to " + state.pageNum );
         state.report.setFilters([filter]);
         //console.log("Filter was set to " + payload.filter);
       }
@@ -59,6 +61,26 @@ export default{
         state.networkCurrentError =  e.message; 
         state.networkPassed =  false;
       }
+    },
+    setPageNum: async (state,payload) => {
+      try{
+        const pages = await state.report.getPages();
+        await pages[payload].setActive();
+        state.pageNum = payload
+        console.log("pageNum was set to " + state.pageNum );
+      }
+      catch(e){
+        state.networkCurrentError =  e.message; 
+        state.networkPassed =  false;
+      }
+    },
+    setDropdown: (state) => {
+      const db = firebase.firestore(); 
+        db.collection('settings').doc('dropdown')
+        .get()
+        .then(doc => { 
+          state.dropdown = doc.data()
+        })
     },
     embeddedPowerBi: async (state)  => {
       try {
@@ -94,7 +116,11 @@ export default{
 
           // Use other embed report config based on the requirement. We have used the first one for demo purpose
           embedUrl: embedData.embedUrl[0].embedUrl,
-
+          settings: {
+            filterPaneEnabled: false,
+            navContentPaneEnabled: false,
+    
+          }
         };
         // Use the token expiry to regenerate Embed token for seamless end user experience
         // Refer https://aka.ms/RefreshEmbedToken
@@ -153,6 +179,12 @@ export default{
     networkErrorReset(state, payload) {
       state.commit('networkSetCurrentError',"unknown error")
       state.commit('networkSetPassed',true)
+    },
+    setPageNum(state, payload) {
+      state.commit('setPageNum',payload)
+    },
+    setDropdown: (state) => {
+      state.commit('setDropdown')
     }
   },
   getters: {
@@ -160,6 +192,8 @@ export default{
     getVerifyOptions: state => state.verifyOptions,
     networkGetCurrentError: state => state.networkCurrentError,
     networkGetPassed: state => state.networkPassed,
-    reportIsLoaded: state => state.reportLoaded
+    reportIsLoaded: state => state.reportLoaded,
+    getPageNum: state => state.pageNum,
+    getDropdown: state => state.dropdown
   }
 };

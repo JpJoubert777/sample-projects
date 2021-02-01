@@ -7,11 +7,24 @@ import firebase from "firebase/app"
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/black-green-light.css'
+import IdleVue from "idle-vue";
 
 Vue.use(VueMaterial);
 Vue.use(firebase) 
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
+
+  
+const eventsHub = new Vue();
+
+  Vue.use(IdleVue, {
+    eventEmitter: eventsHub,
+    store,
+    idleTime: 5 * 1000, // 10 seconds
+    startAtIdle: false
+  });
+
+
 
   // Your web app's Firebase configuration
   const firebaseConfig = {

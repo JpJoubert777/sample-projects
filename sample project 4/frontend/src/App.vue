@@ -8,7 +8,17 @@
       <md-tab  id="Register" md-label="Register" to="/Register" exact></md-tab>
       <md-tab  id="Report" md-label="Report" to="/secret" exact></md-tab>
       </md-tabs>
-      </md-card>
+      </md-card> 
+
+ 
+      <md-dialog :md-active.sync="isIdle"> 
+          <md-dialog-title>timed out</md-dialog-title>
+              <p>The session has expired due to inactivity</p>  
+              <md-dialog-actions>  
+                  <md-button class="md-primary" @click="signOutPressed">Close</md-button>
+              </md-dialog-actions>
+      </md-dialog> 
+   
     </div>
     <router-view/>
   </div>
@@ -24,8 +34,18 @@ export default {
         'loginGetPassed',
         'registerGetPassed',
         'networkGetPassed',
-    ])
+        'isLoggedIn'
+    ]),
+    isIdle() {
+        return this.$store.state.idleVue.isIdle;
+    }
   },
+  methods: {
+    ...mapActions([
+          'signOutPressed',
+          'setLoggedIn'
+        ])
+  }
 }
 </script>
 

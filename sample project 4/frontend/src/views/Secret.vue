@@ -10,49 +10,38 @@
     </div>
     <div v-else>
         <section id="report-container" class="embed-container" ></section>
-        
-      <md-menu md-direction="bottom-start">
-      <md-button md-menu-trigger>Page 1</md-button>
-
-      <md-menu-content>
-        <md-menu-item @click="setFilter({table: 'num_students_by_institution',column:'institution_name',filter:'Microcert',pageNum:0})">Microcert</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'num_students_by_institution',column:'institution_name',filter:'Boston College',pageNum:0})">Boston College</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'num_students_by_institution',column:'institution_name',filter:'University of Johannesburg',pageNum:0})">University of Johannesburg</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'num_students_by_institution',column:'institution_name',filter:'University of Pretoria',pageNum:0})">University of Pretoria</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'num_students_by_institution',column:'institution_name',filter:'University of South Africa',pageNum:0})">University of South Africa</md-menu-item>
-        <md-menu-item @click="removeFilters">None</md-menu-item>
-      </md-menu-content>
-    </md-menu>
-
-    <md-menu md-direction="bottom-end">
-      <md-button md-menu-trigger>Page 2</md-button>
-
-      <md-menu-content>
-        <md-menu-item @click="setFilter({table: 'numClients',column:'industry',filter:'commerce',pageNum:1})">commerce</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'numClients',column:'industry',filter:'finances',pageNum:1})">finances</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'numClients',column:'industry',filter:'insurance',pageNum:1})">insurance</md-menu-item>
-        <md-menu-item @click="setFilter({table: 'numClients',column:'industry',filter:'security',pageNum:1})">security</md-menu-item>
-        <md-menu-item @click="removeFilters">None</md-menu-item>
-      </md-menu-content>
-    </md-menu>
+        <md-button @click="setPageNum(0)">Page 1</md-button>
+        <md-button @click="setPageNum(1)">Page 2</md-button>
+        <md-button @click="removeFilters">remove filters</md-button>
+        <md-field  class = "filter-field">
+            <md-select v-if="this.getPageNum == 0" v-model="selectedInstitution" @input="setFilter({table: 'num_students_by_institution',column:'institution_name',filter:selectedInstitution,pageNum:0})">
+                <md-option v-for="(institution, index) in this.getDropdown.institutions" :key="index" :value="institution">Only show {{institution}} </md-option>   
+            </md-select>
+            <md-select v-else v-model="selectedIndustry" @input="setFilter({table: 'numClients',column:'industry',filter:selectedIndustry,pageNum:1})">
+                <md-option v-for="(industry, index) in this.getDropdown.industries" :key="index" :value="industry">Only show {{industry}} </md-option>   
+            </md-select>
+        </md-field>
     </div>
     
 </template>
 <script>
 
 import { mapActions, mapGetters } from "vuex";
-
 export default {
     name:'secret', 
     data() {
         return { 
+            selectedInstitution: null,
+            selectedIndustry: null
         }
     },
     computed: {
         ...mapGetters([
             'networkGetPassed',
             'networkGetCurrentError',
-            'reportIsLoaded'
+            'reportIsLoaded',
+            'getPageNum',
+            'getDropdown'
             ])
     },
     methods: {  
@@ -60,17 +49,20 @@ export default {
             'getPowerBiReports',
             'networkErrorReset',
             'setFilter',
-            'removeFilters'
+            'removeFilters',
+            'setPageNum',
+            'setDropdown'
         ])
     },
     mounted(){
         if (this.networkGetPassed) {
             this.getPowerBiReports();   
         }
+        this.setDropdown();
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" >
 #report-container {
     height: calc(0.5625 * 61vw); /* 16:9 aspect ratio */
 }
@@ -100,6 +92,10 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  
 }
+.filter-field {
+    max-width: 300px;
+  }
 </style>
 
