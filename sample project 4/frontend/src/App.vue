@@ -10,15 +10,12 @@
       </md-tabs>
       </md-card> 
 
- 
+      <div v-if="this.$route.name!='login'">
       <md-dialog :md-active.sync="isIdle"> 
-          <md-dialog-title>timed out</md-dialog-title>
-              <p>The session has expired due to inactivity</p>  
-              <md-dialog-actions>  
-                  <md-button class="md-primary" @click="signOutPressed">Close</md-button>
-              </md-dialog-actions>
+        <md-dialog-title>timed out</md-dialog-title>
+          <p>The session has expired due to inactivity</p>  
       </md-dialog> 
-   
+      </div>
     </div>
     <router-view/>
   </div>
@@ -35,16 +32,18 @@ export default {
         'registerGetPassed',
         'networkGetPassed',
         'isLoggedIn'
-    ]),
-    isIdle() {
-        return this.$store.state.idleVue.isIdle;
-    }
+    ])
   },
   methods: {
     ...mapActions([
           'signOutPressed',
           'setLoggedIn'
-        ])
+        ]),
+    // logout(){
+    //   if (isIdle() == true) {
+    //     signOutPressed();
+    //   }
+    // }
   }
 }
 </script>

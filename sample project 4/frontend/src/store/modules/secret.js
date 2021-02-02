@@ -76,10 +76,16 @@ export default{
     },
     setDropdown: (state) => {
       const db = firebase.firestore(); 
-        db.collection('settings').doc('dropdown')
+      var settings =  db.collection('settings');
+      settings.doc('dropdown')
         .get()
         .then(doc => { 
           state.dropdown = doc.data()
+        })
+        settings.onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(change => {
+            state.dropdown = change.doc.data()
+          })
         })
     },
     embeddedPowerBi: async (state)  => {
