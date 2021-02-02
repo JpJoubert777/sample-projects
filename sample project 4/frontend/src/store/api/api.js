@@ -8,5 +8,9 @@ export default{
     },
     helloWorld(){
         return api.get("helloWorld");
+    },
+    sendEmail(id){
+        console.log("sendEmail/" + id)
+        return api.get("sendEmail/" + id);
     }
 }

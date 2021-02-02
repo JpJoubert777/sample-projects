@@ -51,4 +51,18 @@ app.get('/getEmbedToken', async function (req, res) {
     res.send(token);
 });
 
+app.get('/sendEmail/:id', async function (req, res) {
+    var id = await req.params.id
+    console.log("received " + id);
+    jwtFirebase.getEmail(id);
+    //var data = null ;
+    // await jwtFirebase.getEmail(id).then(data => {
+    //     console.log("name: " + data.name)
+    // });
+    // console.log("name: " + data.name);
+        // console.log("major: ",major);
+        // console.log("email: ",email);
+        // console.log("start_date: ",start_date);
+});
+
 app.listen(port, () => console.log(`Listening on port ${port}`));

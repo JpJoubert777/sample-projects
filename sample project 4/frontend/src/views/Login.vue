@@ -22,7 +22,7 @@
         </md-card>
         <div v-if = "error" class="error">{{error.message}} </div>
         <md-dialog :md-active.sync="!this.loginGetPassed"> 
-            <md-dialog-title>Preferences</md-dialog-title>
+            <md-dialog-title>Error</md-dialog-title>
                 <p>{{this.loginGetCurrentError}}</p>  
                 <md-dialog-actions>  
                     <md-button class="md-primary" @click="loginErrorReset">Close</md-button>

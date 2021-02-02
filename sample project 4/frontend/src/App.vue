@@ -7,6 +7,7 @@
       <md-tab  id="Login" md-label="Login" to="/Login" exact></md-tab>
       <md-tab  id="Register" md-label="Register" to="/Register" exact></md-tab>
       <md-tab  id="Report" md-label="Report" to="/secret" exact></md-tab>
+      <md-tab  id="Email" md-label="Email" to="/email" exact></md-tab>
       </md-tabs>
       </md-card> 
 
@@ -32,7 +33,13 @@ export default {
         'registerGetPassed',
         'networkGetPassed',
         'isLoggedIn'
-    ])
+    ]),
+    isIdle() {
+       if (this.$store.state.idleVue.isIdle == true) {
+        this.signOutPressed();
+      }
+        return this.$store.state.idleVue.isIdle;
+    }
   },
   methods: {
     ...mapActions([

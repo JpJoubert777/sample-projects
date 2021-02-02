@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Secret from '../views/Secret.vue'
 import Register from '../views/Register.vue'
+import Login from '../views/Login.vue'
+import Email from '../views/Email.vue'
 import firebase from 'firebase/app'
 
 Vue.use(VueRouter)
@@ -18,6 +20,11 @@ const routes = [
     name: 'secret',
     component: Secret,
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/email',
+    name: 'email',
+    component: Email
   },
   {
     path: '/login',
