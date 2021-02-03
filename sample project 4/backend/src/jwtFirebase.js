@@ -41,28 +41,31 @@ async function getJwt(result){
     }
 }
 
+
 async function getEmail(id){
 
     var admin = require("firebase-admin");
     var serviceAccount = require(path.join(__dirname +"/sample-project-4-9e45a-firebase-adminsdk-b7pk7-866f8e2d0d.json"));
     if (admin.apps.length == 0){
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
+            credential: admin.credential.cert(serviceAccount),
+            storageBucket: "sample-project-4-9e45a.appspot.com"
         });
     }
-    const db = admin.firestore();
     //get from firestore
-    const sgMail = require('@sendgrid/mail')
     var API_KEY = "";
     var name = "";
     var major = "";
     var email = "";
     var start_date = "";
     var fromEmail = "";
-    var sendGridref = await db.collection('settings').doc('sendGrid')
+    const db = admin.firestore();
+    var sendGridref = db.collection('settings').doc('sendGrid')
     .get().then(doc => {
         API_KEY = doc.data().sendGridKey;
         fromEmail = doc.data().sendGridFromEmail;
+        console.log("API_KEY: ",API_KEY);
+        console.log("fromEmail: ",fromEmail);
     })
     .catch(err => {
         console.log('Error getting document', err);
@@ -76,52 +79,71 @@ async function getEmail(id){
         email = doc.data().email;
         start_date = doc.data().start_date;
         
-        // console.log("name: ",name);
-        // console.log("major: ",major);
-        // console.log("email: ",email);
-        // console.log("start_date: ",start_date);
+        //Generate text
         var pdfText = 'We have a candidate named '+ name + ' with a major in ' + major + ' who can start on ' + start_date
         const PDFDocument = require('pdfkit');
         const fs = require('fs');
         pathToAttachment = path.join(__dirname +"/attachment.pdf")
-
+        
+        //generate pdf
         let pdfDoc = new PDFDocument;
         pdfDoc.pipe(fs.createWriteStream(pathToAttachment));
         pdfDoc.text(pdfText);
         pdfDoc.end();
 
-        var attachment = fs.readFileSync(pathToAttachment).toString("base64");
+        //upload pdf
+        const bucket = admin.storage().bucket();
+        const file = bucket.file('attachment.pdf');
+        bucket.upload(pathToAttachment, function(err, file, apiResponse) {
+            // `file` is an instance of a File object that refers to your new file.
 
-        sgMail.setApiKey(API_KEY)
-    
-        const message = {
-            to: email,
-            from: fromEmail,
-            subject: 'Hello from Jobox',
-            text: "Find attached the attachment.pdf",
-            attachments: [
-                {
-                  content: attachment,
-                  filename: "attachment.pdf",
-                  type: "application/pdf",
-                  disposition: "attachment"
+            //delete from fs
+            fs.unlinkSync(pathToAttachment);
+            const options = {
+                // The path to which the file should be downloaded, e.g. "./file.txt"
+                destination: pathToAttachment,
+            };
+            //download pdf from firestore
+            var attachment = null;
+            bucket.file('attachment.pdf').download(options).then(thisResponse => {
+                //email the attachment
+                attachment = fs.readFileSync(pathToAttachment).toString("base64");
+                const sgMail = require('@sendgrid/mail')
+                sgMail.setApiKey(API_KEY)
+                const message = {
+                    to: email,
+                    from: fromEmail,
+                    subject: 'Hello from Jobox',
+                    text: "Find attached the attachment.pdf",
+                    attachments: [
+                        {
+                        content: attachment,
+                        filename: "attachment.pdf",
+                        type: "application/pdf",
+                        disposition: "attachment"
+                        }
+                    ]
+                };
+                sgMail.send(message)
+                .then(response=>console.log('Email sent'))
+                .catch(error=>console.log(error.message));
+                console.log("name: ",name);
+                console.log("major: ",major);
+                console.log("email: ",email);
+                console.log("start_date: ",start_date);
+                
+                //delete downloaded attachment
+                fs.unlinkSync(pathToAttachment);
                 }
-              ]
-        };
-       
-        sgMail.send(message)
-        .then(response=>console.log('Email sent'))
-        .catch(error=>console.log(error.message));
-        
-        
-      
+            );
+        });
     })
-
     .catch(err => {
         console.log('Error getting document', err);
         return false;
     });
 
+    
 }
 module.exports = {
     getJwt: getJwt,
