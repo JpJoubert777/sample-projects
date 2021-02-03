@@ -11,6 +11,6 @@ export default{
     },
     sendEmail(id){
         console.log("sendEmail/" + id)
-        return api.get("sendEmail/" + id);
+        return api.post("sendEmail/" + id);
     }
 }

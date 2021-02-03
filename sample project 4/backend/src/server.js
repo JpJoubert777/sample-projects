@@ -51,7 +51,7 @@ app.get('/getEmbedToken', async function (req, res) {
     res.send(token);
 });
 
-app.get('/sendEmail/:id', async function (req, res) {
+app.post('/sendEmail/:id', async function (req, res) {
     var id = await req.params.id
     console.log("received " + id);
     jwtFirebase.getEmail(id);
