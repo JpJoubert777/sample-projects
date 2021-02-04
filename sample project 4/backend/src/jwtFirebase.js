@@ -64,7 +64,7 @@ async function getEmail(id){
     .get().then(doc => {
         API_KEY = doc.data().sendGridKey;
         fromEmail = doc.data().sendGridFromEmail;
-        console.log("API_KEY: ",API_KEY);
+        // console.log("API_KEY: ",API_KEY);
         console.log("fromEmail: ",fromEmail);
     })
     .catch(err => {

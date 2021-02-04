@@ -17,21 +17,32 @@ export default {
     sendPressed: async (state,payload) => {
         try{
             const db = firebase.firestore(); 
-            var emailsRef =  db.collection('emails');
-            emailsRef.add({
+            const increment = firebase.firestore.FieldValue.increment(1);
+            var id = 0;
+            const totalEmailsRef = db.collection('emails').doc('invoiceCount')
+            .get().then(doc => {
+              id = doc.data().count;
+              console.log("inner id:" + id);
+
+              const statsRef = db.collection('emails').doc('invoiceCount')
+              const emailsRef =  db.collection('emails').doc(id.toString());
+
+              const batch = db.batch();
+      
+              batch.set(emailsRef, {
                 name: payload.name,
                 major: payload.major,
                 email: payload.email,
                 start_date: payload.start_date
-            }).then(async function(docRef) {
-                console.log("email created with ID: ", docRef.id);
-                api.sendEmail(docRef.id);
-            }).catch(function(error) {
-                state.emailCurrentError = e.message;
-                state.emailPassed = false
+              });
+
+              batch.set(statsRef, {count: increment}, {merge: true});
+              
+              batch.commit().then(newdoc => {
+                console.log("email created with ID: ", id);
+                api.sendEmail(id);  
+              });
             });
-           
-            
         }
         catch(e){
             state.emailCurrentError = e.message;

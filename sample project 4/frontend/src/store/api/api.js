@@ -10,7 +10,6 @@ export default{
         return api.get("helloWorld");
     },
     sendEmail(id){
-        console.log("sendEmail/" + id)
         return api.post("sendEmail/" + id);
     }
 }
