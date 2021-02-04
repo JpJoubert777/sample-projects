@@ -33,7 +33,8 @@ export default {
                 name: payload.name,
                 major: payload.major,
                 email: payload.email,
-                start_date: payload.start_date
+                start_date: payload.start_date,
+                receiptURL: ""
               });
 
               batch.set(statsRef, {count: increment}, {merge: true});

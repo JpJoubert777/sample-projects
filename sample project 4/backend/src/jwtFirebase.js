@@ -79,13 +79,11 @@ async function getEmail(id){
         email = doc.data().email;
         start_date = doc.data().start_date;
         
-        //Generate text
-        var pdfText = 'We have a candidate named '+ name + ' with a major in ' + major + ' who can start on ' + start_date
+        //Generate pdf
+        var pdfText = 'We have a candidate named '+ name + ' with a major in ' + major + ' who can start on ' + start_date + ". Invoice ID:" + id;
         const PDFDocument = require('pdfkit');
         const fs = require('fs');
-        pathToAttachment = path.join(__dirname +"/attachment.pdf")
-        
-        //generate pdf
+        pathToAttachment = path.join(__dirname +"/" + id + ".pdf");
         let pdfDoc = new PDFDocument;
         pdfDoc.pipe(fs.createWriteStream(pathToAttachment));
         pdfDoc.text(pdfText);
@@ -93,19 +91,23 @@ async function getEmail(id){
 
         //upload pdf
         const bucket = admin.storage().bucket();
-        const file = bucket.file('attachment.pdf');
-        bucket.upload(pathToAttachment, function(err, file, apiResponse) {
-            // `file` is an instance of a File object that refers to your new file.
-
+        const file = bucket.file(id + ".pdf");
+        var URL = ""
+        bucket.upload(pathToAttachment,{public: true}).then(thisFile=>{
+     
+            URL = thisFile["0"].metadata.mediaLink;
             //delete from fs
             fs.unlinkSync(pathToAttachment);
+
+
             const options = {
                 // The path to which the file should be downloaded, e.g. "./file.txt"
                 destination: pathToAttachment,
             };
+
             //download pdf from firestore
             var attachment = null;
-            bucket.file('attachment.pdf').download(options).then(thisResponse => {
+            bucket.file(id + ".pdf").download(options).then(thisResponse => {
                 //email the attachment
                 attachment = fs.readFileSync(pathToAttachment).toString("base64");
                 const sgMail = require('@sendgrid/mail')
@@ -118,14 +120,18 @@ async function getEmail(id){
                     attachments: [
                         {
                         content: attachment,
-                        filename: "attachment.pdf",
+                        filename: id + ".pdf",
                         type: "application/pdf",
                         disposition: "attachment"
                         }
                     ]
                 };
                 sgMail.send(message)
-                .then(response=>console.log('Email sent'))
+                .then(response=>{
+                    console.log('Email sent with URL: ' + URL)
+                    const newRef = db.collection('emails').doc(id);
+                    const result = newRef.update({receiptURL:URL});
+                })
                 .catch(error=>console.log(error.message));
                 console.log("name: ",name);
                 console.log("major: ",major);
@@ -134,9 +140,11 @@ async function getEmail(id){
                 
                 //delete downloaded attachment
                 fs.unlinkSync(pathToAttachment);
-                }
-            );
+
+                
+            });
         });
+        
     })
     .catch(err => {
         console.log('Error getting document', err);
