@@ -16,6 +16,8 @@ export default {
   mutations: {
     sendPressed: async (state,payload) => {
         try{
+          //---------------------------> For deployment and scalability, look into distributed counters <---------------------------
+          //future research: https://firebase.google.com/docs/firestore/solutions/counters#node.js
             const db = firebase.firestore(); 
             const increment = firebase.firestore.FieldValue.increment(1);
             var id = 0;

@@ -43,7 +43,8 @@ async function getJwt(result){
 
 
 async function getEmail(id){
-
+    //---------------------------> For deployment and scalability, look into distributed counters <---------------------------
+    //future research: https://firebase.google.com/docs/firestore/solutions/counters#node.js
     var admin = require("firebase-admin");
     var serviceAccount = require(path.join(__dirname +"/sample-project-4-9e45a-firebase-adminsdk-b7pk7-866f8e2d0d.json"));
     if (admin.apps.length == 0){
@@ -91,9 +92,12 @@ async function getEmail(id){
 
         //upload pdf
         const bucket = admin.storage().bucket();
-        const file = bucket.file(id + ".pdf");
+        const file = bucket.file("invoice #" + id + ".pdf");
         var URL = ""
-        bucket.upload(pathToAttachment,{public: true}).then(thisFile=>{
+        //code taken from:
+        //https://stackoverflow.com/questions/51085073/get-image-url-firebase-storage-admin
+        bucket.upload(pathToAttachment,{destination: "invoices/"+"invoice #" + id + ".pdf", 
+                                        public: true}).then(thisFile=>{
      
             URL = thisFile["0"].metadata.mediaLink;
             //delete from fs
@@ -107,7 +111,7 @@ async function getEmail(id){
 
             //download pdf from firestore
             var attachment = null;
-            bucket.file(id + ".pdf").download(options).then(thisResponse => {
+            bucket.file("invoices/"+"invoice #" + id + ".pdf").download(options).then(thisResponse => {
                 //email the attachment
                 attachment = fs.readFileSync(pathToAttachment).toString("base64");
                 const sgMail = require('@sendgrid/mail')
